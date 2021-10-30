@@ -123,7 +123,39 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
     """
+    def maxValue(self, gameState, depth):
+        if gameState.isLose() or gameState.isWin():
+                return gameState.getScore()
+        v=float("-inf")
+        acciones=gameState.getLegalActions(0)
+        mejorAc=Directions.STOP
+        fantasmas=gameState.getNumAgents()-1
+        for accion in acciones:
+            for i in range(fantasmas):
+                score = self.minValue(gameState.generateSuccessor(0, accion), i, depth)
+                if v < score:
+                    v=score
+                    mejorAc=accion
+        if depth == 0:
+            return mejorAc
+        else:
+            return v
 
+
+    def minValue(self, gameState, agente, depth):
+        if gameState.isLose() or gameState.isWin():
+                return gameState.getScore()
+        v=float("inf")
+        acciones=gameState.getLegalActions(0)
+        for accion in acciones:
+            if depth == self.depth + 1:
+                score = self.evaluationFunction(gameState.generateSuccessor(agente, accion))
+            else:
+                score = self.maxValue(gameState.generateSuccessor(agente, accion), depth -1)
+            if v > score:
+                v=score
+        return v
+    
     def getAction(self, gameState):
         """
         Returns the minimax action from the current gameState using self.depth
@@ -148,19 +180,55 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.maxValue(gameState, self.depth)
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
     """
-
+    def max_value(self, gameState, alfa, beta, depth):
+        if gameState.isLose() or gameState.isWin():
+                return gameState.getScore()
+        v=-float("inf")
+        acciones=gameState.getLegalActions(0)
+        mejorAc=Directions.STOP
+        fantasmas=gameState.getNumAgents()-1
+        for accion in acciones:
+            for i in range(fantasmas):
+                score = self.minValue(gameState.generateSuccessor(0, accion), i, alfa, beta, depth)
+                if v < score:
+                    v=score
+                    mejorAc=accion
+                if v >= beta:
+                    return v
+                alfa=max(alfa, v)
+        if depth == 0:
+            return mejorAc
+        else:
+            return v
+        
+    def min_value(self, gameState, actor, alfa, beta, depth):
+        if gameState.isLose() or gameState.isWin():
+                return gameState.getScore()
+        v=float("inf")
+        acciones=gameState.getLegalActions(0)
+        for accion in acciones:
+            if depth == self.depth + 1:
+                score = self.evaluationFunction(gameState.generateSuccessor(actor, accion))
+            else:
+                score = self.maxValue(gameState.generateSuccessor(actor, accion), alfa, beta, depth -1)
+            if v > score:
+                v=score
+            if v <= alfa:
+                return v
+            beta=min(beta, v)
+        return v
     def getAction(self, gameState):
         """
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.maxValue(gameState, 0, 0, self.depth)
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
