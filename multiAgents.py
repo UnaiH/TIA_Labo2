@@ -257,17 +257,16 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         acciones = gameState.getLegalActions(agente)
         if len(acciones)==0:
             return gameState.getScore()        
-        v = float("inf")
+        v = 0
+        num_acciones = float(len(acciones))
         for accion in acciones:
             if agente < gameState.getNumAgents()-1:                            
                 movimiento = self.minValue(gameState.generateSuccessor(agente,accion),agente+1,depth)
-                if movimiento < v:
-                    v = movimiento            
+                v += movimiento
             else:                
                 movimiento = self.maxValue(gameState.generateSuccessor(agente,accion), depth +1)
-                if movimiento < v:
-                    v = movimiento
-        return v
+                v += movimiento
+        return v/num_acciones
     def getAction(self, gameState):
         """
         Returns the expectimax action using self.depth and self.evaluationFunction
