@@ -146,19 +146,16 @@ class MinimaxAgent(MultiAgentSearchAgent):
         if len(acciones)==0:
             return gameState.getScore()        
         v = float("inf")
-        acciones = gameState.getLegalActions(agente)
-        if agente < gameState.getNumAgents()-1:                
-            for accion in acciones:
+        for accion in acciones:
+            if agente < gameState.getNumAgents()-1:                            
                 movimiento = self.minValue(gameState.generateSuccessor(agente,accion),agente+1,depth)
                 if movimiento < v:
-                    v = movimiento
-            return v
-        else:
-            for accion in acciones:
+                    v = movimiento            
+            else:                
                 movimiento = self.maxValue(gameState.generateSuccessor(agente,accion), depth +1)
                 if movimiento < v:
                     v = movimiento
-            return v
+        return v
 
     def getAction(self, gameState):
         """
@@ -190,49 +187,50 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
     """
-    def max_value(self, gameState, alfa, beta, depth):
-        if gameState.isLose() or gameState.isWin():
-                return gameState.getScore()
-        v=-float("inf")
-        acciones=gameState.getLegalActions(0)
-        mejorAc=Directions.STOP
-        fantasmas=gameState.getNumAgents()-1
-        for accion in acciones:
-            for i in range(fantasmas):
-                score = self.minValue(gameState.generateSuccessor(0, accion), i, alfa, beta, depth)
-                if v < score:
-                    v=score
-                    mejorAc=accion
-                if v >= beta:
-                    return v
-                alfa=max(alfa, v)
-        if depth == 0:
-            return mejorAc
-        else:
-            return v
+    def maxValue(self, gameState, alfa, beta, depth):
         
-    def min_value(self, gameState, actor, alfa, beta, depth):
-        if gameState.isLose() or gameState.isWin():
-                return gameState.getScore()
-        v=float("inf")
-        acciones=gameState.getLegalActions(0)
+        acciones = gameState.getLegalActions(0)
+        if depth==self.depth or len(acciones)==0:
+            return gameState.getScore()
+        v = float("-inf")
         for accion in acciones:
-            if depth == self.depth + 1:
-                score = self.evaluationFunction(gameState.generateSuccessor(actor, accion))
-            else:
-                score = self.maxValue(gameState.generateSuccessor(actor, accion), alfa, beta, depth -1)
-            if v > score:
-                v=score
-            if v <= alfa:
+            v = max(v,self.minValue(gameState.generateSuccessor(0,accion),1,alfa,beta,depth))
+            if v > beta:
                 return v
-            beta=min(beta, v)
+            alfa = max(alfa,v)
+        return v
+        
+    def minValue(self, gameState, actor, alfa, beta, depth):
+        acciones = gameState.getLegalActions(actor)
+        if len(acciones)==0:
+            return gameState.getScore()
+        v = float("inf")
+        for accion in acciones:
+            if actor < gameState.getNumAgents()-1:                            
+                v = min(v, self.minValue(gameState.generateSuccessor(actor,accion),actor+1,alfa,beta,depth))
+            else:            
+                v = min(v, self.maxValue(gameState.generateSuccessor(actor,accion),alfa,beta, depth +1))
+            if  v < alfa:
+                return v
+            beta = min(beta,v)      
         return v
     def getAction(self, gameState):
         """
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        return self.maxValue(gameState, 0, 0, self.depth)
+        alfa = float("-inf")
+        beta = float("inf")
+        v = float("-inf")
+        acciones = gameState.getLegalActions(0)
+        maxima_accion = None
+        for accion in acciones:
+            v = self.minValue(gameState.generateSuccessor(0,accion),1,alfa,beta,0)
+            if alfa < v:
+                alfa = v
+                maxima_accion = accion
+        return maxima_accion
+        
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
