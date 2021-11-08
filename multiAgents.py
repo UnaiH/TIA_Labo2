@@ -311,7 +311,7 @@ def betterEvaluationFunction(currentGameState):
     cap_score=0
     if(len(capsulas) != 0):
         for capsula in capsulas:
-            cap_dis = min([manhattanDistance(capsula, pacman_pos)])
+            cap_dis = manhattanDistance(capsula, pacman_pos)
             if cap_dis == 0 :
                 cap_score = float(1)/cap_dis
             else:
