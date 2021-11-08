@@ -72,8 +72,6 @@ class ReflexAgent(Agent):
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-
-        "*** YOUR CODE HERE ***"
         score = 0
         food = currentGameState.getFood()
         for fantasma in newGhostStates:
@@ -88,6 +86,8 @@ class ReflexAgent(Agent):
                 distanciasPunt += 1/manhattanDistance(comida,newPos)
             score += distanciasPunt
         return score
+
+        
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -123,11 +123,11 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
     """
-    
+
     def maxValue(self,gameState, depth):
         acciones = gameState.getLegalActions(0)
         if depth==self.depth or len(acciones)==0:
-            return gameState.getScore()
+            return self.evaluationFunction(gameState)
         v = float("-inf")
         maxima_accion = None
         for accion in acciones:
@@ -144,7 +144,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
     def minValue(self, gameState, agente, depth):
         acciones = gameState.getLegalActions(agente)
         if len(acciones)==0:
-            return gameState.getScore()        
+            return self.evaluationFunction(gameState)       
         v = float("inf")
         for accion in acciones:
             if agente < gameState.getNumAgents()-1:                            
@@ -180,8 +180,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
         gameState.isLose():
         Returns whether or not the game state is a losing state
         """
-        "*** YOUR CODE HERE ***"        
+        "*** YOUR CODE HERE ***"
         return self.maxValue(gameState,0)
+
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -191,7 +192,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         
         acciones = gameState.getLegalActions(0)
         if depth==self.depth or len(acciones)==0:
-            return gameState.getScore()
+            return self.evaluationFunction(gameState)
         v = float("-inf")
         for accion in acciones:
             v = max(v,self.minValue(gameState.generateSuccessor(0,accion),1,alfa,beta,depth))
@@ -203,7 +204,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     def minValue(self, gameState, actor, alfa, beta, depth):
         acciones = gameState.getLegalActions(actor)
         if len(acciones)==0:
-            return gameState.getScore()
+            return self.evaluationFunction(gameState)
         v = float("inf")
         for accion in acciones:
             if actor < gameState.getNumAgents()-1:                            
@@ -230,16 +231,16 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 alfa = v
                 maxima_accion = accion
         return maxima_accion
-        
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent (question 4)
     """
+
     def maxValue(self,gameState, depth):
         acciones = gameState.getLegalActions(0)
         if depth==self.depth or len(acciones)==0:
-            return gameState.getScore()
+            return self.evaluationFunction(gameState)
         v = float("-inf")
         maxima_accion = None
         for accion in acciones:
@@ -256,7 +257,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
     def minValue(self, gameState, agente, depth):
         acciones = gameState.getLegalActions(agente)
         if len(acciones)==0:
-            return gameState.getScore()        
+            return self.evaluationFunction(gameState)        
         v = 0
         num_acciones = float(len(acciones))
         for accion in acciones:
@@ -267,6 +268,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                 movimiento = self.maxValue(gameState.generateSuccessor(agente,accion), depth +1)
                 v += movimiento
         return v/num_acciones
+
     def getAction(self, gameState):
         """
         Returns the expectimax action using self.depth and self.evaluationFunction
@@ -284,12 +286,11 @@ def betterEvaluationFunction(currentGameState):
 
     DESCRIPTION: <write something here so we know what you did>
     """
-    "*** YOUR CODE HERE ***" 
+    "*** YOUR CODE HERE ***"
     ghostStates = currentGameState.getGhostStates()
     pacman_pos = currentGameState.getPacmanPosition()
     score = currentGameState.getScore()
-
-    score = 0
+    print(score)
     food = currentGameState.getFood()
     for fantasma in ghostStates:
         dist = manhattanDistance(fantasma.getPosition(),pacman_pos)
@@ -299,9 +300,7 @@ def betterEvaluationFunction(currentGameState):
     for comida in food.asList():
         distanciasPunt += 1/manhattanDistance(comida,pacman_pos)
         score += distanciasPunt
-    
     return score
-
 
 # Abbreviation
 better = betterEvaluationFunction
