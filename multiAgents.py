@@ -291,26 +291,33 @@ def betterEvaluationFunction(currentGameState):
     pacman_pos = currentGameState.getPacmanPosition()
     score = currentGameState.getScore()
     food = currentGameState.getFood()
+    capsulas = currentGameState.getCapsules()
     if pacman_pos==(11,5) or pacman_pos==(9,5):
         score -= 150
     elif pacman_pos==(10,5) or pacman_pos==(8,5):
         score -= 500
     for fantasma in ghostStates:
-        dist = manhattanDistance(fantasma.getPosition(),pacman_pos)
-        if dist<2:
-            score -= 500
+        fanpos = fantasma.getPosition()
+        fandis = manhattanDistance(pacman_pos, fanpos)
+    score -= (float(1)/1+fandis)
     distanciasPunt = 0
     for comida in food.asList():
-        distanciasPunt += 1/manhattanDistance(comida,pacman_pos)
+        distanciasPunt += float(1)/(1+manhattanDistance(comida,pacman_pos))
         score += distanciasPunt
-    capsulas = currentGameState.getCapsules()
-    if len(capsulas) !=0:
+    if pacman_pos==(3,3) and (3,3) not in capsulas:
+        score -= 500
+    elif pacman_pos==(16,3) and (16,3) not in capsulas:
+        score -= 500
+    cap_score=0
+    if(len(capsulas) != 0):
         for capsula in capsulas:
-            dis_cap=min([manhattanDistance(capsula, pacman_pos)])
-            if dis_cap == 0:
-                score += (1/dis_cap)
+            cap_dis = min([manhattanDistance(capsula, pacman_pos)])
+            if cap_dis == 0 :
+                cap_score = float(1)/cap_dis
             else:
-                score -= 100
+                cap_score = -100
+        score += (1.0/1+cap_score)   
+
     return score
 
 # Abbreviation
