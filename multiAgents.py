@@ -299,8 +299,6 @@ def betterEvaluationFunction(currentGameState):
         dist = manhattanDistance(fantasma.getPosition(),pacman_pos)
         if dist<2:
             score -= 500
-        else:
-            score -= 1/dist
     distanciasPunt = 0
     for comida in food.asList():
         distanciasPunt += 1/manhattanDistance(comida,pacman_pos)
