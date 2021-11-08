@@ -290,8 +290,11 @@ def betterEvaluationFunction(currentGameState):
     ghostStates = currentGameState.getGhostStates()
     pacman_pos = currentGameState.getPacmanPosition()
     score = currentGameState.getScore()
-    print(score)
     food = currentGameState.getFood()
+    if pacman_pos==(11,5) or pacman_pos==(9,5):
+        score -= 150
+    elif pacman_pos==(10,5) or pacman_pos==(8,5):
+        score -= 500
     for fantasma in ghostStates:
         dist = manhattanDistance(fantasma.getPosition(),pacman_pos)
         if dist<2:
